@@ -22,3 +22,8 @@ type SignatureDevice struct {
 func InitialLastSignature(id string) string {
 	return base64.StdEncoding.EncodeToString([]byte(id))
 }
+
+type SignatureResult struct {
+	SignatureB64 string
+	SignedData   string
+}

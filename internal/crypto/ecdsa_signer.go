@@ -8,7 +8,7 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 
-	"example.com/fiskaly/signature/internal/domain"
+	"github.com/oxygenesis/signature/internal/domain"
 )
 
 var ecdsaGenerateKey = ecdsa.GenerateKey

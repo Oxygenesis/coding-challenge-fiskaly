@@ -8,7 +8,7 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 
-	"example.com/fiskaly/signature/internal/domain"
+	"github.com/oxygenesis/signature/internal/domain"
 )
 
 var rsaGenerateKey = rsa.GenerateKey
@@ -36,6 +36,7 @@ func (s *RSASigner) Verify(payload, signature []byte) bool {
 	h := sha256.Sum256(payload)
 	return rsa.VerifyPKCS1v15(&s.priv.PublicKey, crypto.SHA256, h[:], signature) == nil
 }
+
 func (s *RSASigner) PublicPEM() string     { return s.pubPEM }
 func (s *RSASigner) AlgorithmName() string { return "RSA" }
 

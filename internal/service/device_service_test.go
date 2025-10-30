@@ -6,8 +6,8 @@ import (
 	"sync"
 	"testing"
 
-	"example.com/fiskaly/signature/internal/domain"
-	"example.com/fiskaly/signature/internal/storage"
+	"github.com/oxygenesis/signature/internal/domain"
+	"github.com/oxygenesis/signature/internal/storage"
 )
 
 type fakeFactory struct{}

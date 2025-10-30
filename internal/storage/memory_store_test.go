@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"example.com/fiskaly/signature/internal/domain"
+	"github.com/oxygenesis/signature/internal/domain"
 )
 
 type fakeSigner struct{}

@@ -1,6 +1,6 @@
 package storage
 
-import "example.com/fiskaly/signature/internal/domain"
+import "github.com/oxygenesis/signature/internal/domain"
 
 // Repository persists SignatureDevice aggregates.
 // Update provides a per-device critical section to support atomic updates.

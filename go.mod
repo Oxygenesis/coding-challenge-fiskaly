@@ -1,3 +1,3 @@
-module example.com/fiskaly/signature
+module github.com/oxygenesis/signature
 
 go 1.20

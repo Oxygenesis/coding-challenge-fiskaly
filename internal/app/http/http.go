@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	"example.com/fiskaly/signature/internal/app/http/handler"
-	"example.com/fiskaly/signature/internal/app/http/middleware"
-	"example.com/fiskaly/signature/internal/service"
+	"github.com/oxygenesis/signature/internal/app/http/handler"
+	"github.com/oxygenesis/signature/internal/app/http/middleware"
+	"github.com/oxygenesis/signature/internal/service"
 )
 
 func defaultListenAndServe(srv *http.Server) error { return srv.ListenAndServe() }

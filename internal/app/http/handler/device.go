@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"strings"
 
-	"example.com/fiskaly/signature/internal/domain"
-	"example.com/fiskaly/signature/internal/service"
+	"github.com/oxygenesis/signature/internal/domain"
+	"github.com/oxygenesis/signature/internal/service"
 )
 
 type Device struct{ svc *service.DeviceService }
@@ -44,6 +44,7 @@ func (h *Device) DeviceOps(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
+
 	if strings.HasSuffix(rest, "/sign") && r.Method == http.MethodPost {
 		id := strings.TrimSuffix(rest, "/sign")
 		if id == "" || strings.Contains(id, "/") {
@@ -53,11 +54,13 @@ func (h *Device) DeviceOps(w http.ResponseWriter, r *http.Request) {
 		h.Sign(w, r, id)
 		return
 	}
+
 	// GET /v1/devices/{id}
 	if r.Method == http.MethodGet && !strings.Contains(rest, "/") {
 		h.Get(w, r, rest)
 		return
 	}
+
 	http.NotFound(w, r)
 }
 
@@ -72,6 +75,7 @@ func (h *Device) Create(w http.ResponseWriter, r *http.Request) {
 		writeErr(w, http.StatusBadRequest, "invalid JSON")
 		return
 	}
+
 	if req.ID == "" {
 		writeErr(w, http.StatusBadRequest, "id is required")
 		return
@@ -82,13 +86,14 @@ func (h *Device) Create(w http.ResponseWriter, r *http.Request) {
 		switch {
 		case errors.Is(err, domain.ErrAlreadyExists):
 			writeErr(w, http.StatusConflict, err.Error())
-		case errors.Is(err, domain.ErrInvalidAlgorithm): // <— now reachable & coverable
+		case errors.Is(err, domain.ErrInvalidAlgorithm):
 			writeErr(w, http.StatusBadRequest, err.Error())
 		default:
 			writeErr(w, http.StatusInternalServerError, err.Error())
 		}
 		return
 	}
+
 	writeJSON(w, http.StatusCreated, dev)
 }
 
@@ -102,6 +107,7 @@ func (h *Device) Get(w http.ResponseWriter, r *http.Request, id string) {
 		writeErr(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+
 	writeJSON(w, http.StatusOK, dev)
 }
 
@@ -111,12 +117,14 @@ func (h *Device) List(w http.ResponseWriter, _ *http.Request) {
 		writeErr(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+
 	writeJSON(w, http.StatusOK, devs)
 }
 
 func (h *Device) Sign(w http.ResponseWriter, r *http.Request, id string) {
 	defer r.Body.Close()
 	raw, _ := io.ReadAll(r.Body)
+
 	var req struct {
 		Data string `json:"data"`
 	}
@@ -124,6 +132,7 @@ func (h *Device) Sign(w http.ResponseWriter, r *http.Request, id string) {
 		writeErr(w, http.StatusBadRequest, "invalid JSON")
 		return
 	}
+
 	// Let service validate empty data -> ErrInvalidInput => 400 (coverable)
 	res, err := h.svc.Sign(id, req.Data)
 	if err != nil {
@@ -137,13 +146,14 @@ func (h *Device) Sign(w http.ResponseWriter, r *http.Request, id string) {
 		}
 		return
 	}
+
 	writeJSON(w, http.StatusOK, map[string]any{
 		"signature":   res.SignatureB64,
 		"signed_data": res.SignedData,
 	})
 }
 
-// --- helpers ---
+// helpers
 
 func writeJSON(w http.ResponseWriter, status int, v any) {
 	w.Header().Set("content-type", "application/json")

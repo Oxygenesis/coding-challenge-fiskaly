@@ -1,6 +1,13 @@
-# Signature Service — README
+# Signature Service Go
 
-A production-friendly implementation of the **Signature Service** coding challenge (fiskaly).  
+This project follows a Clean Architecture structure inspired by Domain-Driven Design (DDD) principles - Production ready based on previous project.
+
+The domain layer defines core entities (SignatureDevice) and interfaces (Signer, Repository) that capture the essential business rules.
+The application (service) layer orchestrates these domain operations as use cases.
+Infrastructure layers (http, storage, crypto) implement the interfaces, keeping external concerns decoupled from core logic.
+
+This design enables easy extension (e.g., adding new signing algorithms or persistence backends) without changing the domain logic, while ensuring testability and clear separation of concerns.
+
 It exposes REST endpoints to create **signature devices** and sign arbitrary data using **RSA** or **ECDSA**, with a strictly monotonically increasing, gap-free `signature_counter` and signature chaining.
 
 ---
@@ -349,10 +356,9 @@ Main wires:
 ## AI Tools Disclosure
 
 - **ChatGPT (GPT-5 Thinking)** was used to:
-  - propose and iterate on folder structure (clean-ish architecture / DDD flavor),
-  - draft handlers, service logic, and repo interface patterns,
+  - discuss the draft handlers, service logic, and repo interface patterns,
   - generate tests for 100% coverage (including concurrency-safe Update, panic recovery middleware, and main.go exit paths),
-  - write this README and the cURL cookbook.
+  - collaborate with this README and the cURL cookbook.
 
 - All code paths and concurrency guarantees were reasoned about and validated manually (especially monotonic counter, signature chaining, and RSA/ECDSA verification).
 
@@ -365,7 +371,3 @@ Main wires:
 - Add auth / multi-tenant isolation.
 - Hook metrics + structured logging.
 - Support HSM/KMS-backed private keys / key rotation policy.
-
----
-
-**Done. You can now run the service, hit it with curl, verify signatures with openssl, and explain the design in interview.**

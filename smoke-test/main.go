@@ -19,13 +19,13 @@ import (
 	"net/http/httptest"
 	"strings"
 
-	"example.com/fiskaly/signature/internal/app/http/handler"
-	"example.com/fiskaly/signature/internal/app/http/middleware"
-	"example.com/fiskaly/signature/internal/crypto"
-	"example.com/fiskaly/signature/internal/domain"
-	"example.com/fiskaly/signature/internal/service"
-	"example.com/fiskaly/signature/internal/storage"
-	"example.com/fiskaly/signature/pkg/id"
+	"github.com/oxygenesis/signature/internal/app/http/handler"
+	"github.com/oxygenesis/signature/internal/app/http/middleware"
+	"github.com/oxygenesis/signature/internal/crypto"
+	"github.com/oxygenesis/signature/internal/domain"
+	"github.com/oxygenesis/signature/internal/service"
+	"github.com/oxygenesis/signature/internal/storage"
+	"github.com/oxygenesis/signature/pkg/id"
 )
 
 const apiPrefix = "/v1" // adjust to "" if your routes don’t use /v1

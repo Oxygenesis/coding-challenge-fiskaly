@@ -3,7 +3,7 @@ package storage
 import (
 	"sync"
 
-	"example.com/fiskaly/signature/internal/domain"
+	"github.com/oxygenesis/signature/internal/domain"
 )
 
 type rec struct {
@@ -19,6 +19,7 @@ type Memory struct {
 
 func NewMemory() *Memory { return &Memory{data: make(map[string]*rec)} }
 
+// Create used to create a new device in the memory store.
 func (m *Memory) Create(dev *domain.SignatureDevice, signer domain.Signer) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -30,6 +31,7 @@ func (m *Memory) Create(dev *domain.SignatureDevice, signer domain.Signer) error
 	return nil
 }
 
+// Get used to get a device from the memory store.
 func (m *Memory) Get(id string) (*domain.SignatureDevice, domain.Signer, error) {
 	m.mu.RLock()
 	r, ok := m.data[id]
@@ -41,6 +43,7 @@ func (m *Memory) Get(id string) (*domain.SignatureDevice, domain.Signer, error) 
 	return &cp, r.signer, nil
 }
 
+// List used to lists all devices in the memory store.
 func (m *Memory) List() ([]*domain.SignatureDevice, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
@@ -52,6 +55,7 @@ func (m *Memory) List() ([]*domain.SignatureDevice, error) {
 	return out, nil
 }
 
+// Update used to update a device in the memory store.
 func (m *Memory) Update(id string, fn func(d *domain.SignatureDevice, signer domain.Signer) error) error {
 	m.mu.RLock()
 	r, ok := m.data[id]

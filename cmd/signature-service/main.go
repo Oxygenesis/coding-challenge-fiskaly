@@ -7,12 +7,12 @@ import (
 	"log"
 	"os"
 
-	httpApp "example.com/fiskaly/signature/internal/app/http"
-	"example.com/fiskaly/signature/internal/crypto"
-	"example.com/fiskaly/signature/internal/domain"
-	"example.com/fiskaly/signature/internal/service"
-	"example.com/fiskaly/signature/internal/storage"
-	"example.com/fiskaly/signature/pkg/id"
+	httpApp "github.com/oxygenesis/signature/internal/app/http"
+	"github.com/oxygenesis/signature/internal/crypto"
+	"github.com/oxygenesis/signature/internal/domain"
+	"github.com/oxygenesis/signature/internal/service"
+	"github.com/oxygenesis/signature/internal/storage"
+	"github.com/oxygenesis/signature/pkg/id"
 )
 
 type factory struct{}

@@ -9,10 +9,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"example.com/fiskaly/signature/internal/app/http/handler"
-	"example.com/fiskaly/signature/internal/domain"
-	"example.com/fiskaly/signature/internal/service"
-	"example.com/fiskaly/signature/internal/storage"
+	"github.com/oxygenesis/signature/internal/app/http/handler"
+	"github.com/oxygenesis/signature/internal/domain"
+	"github.com/oxygenesis/signature/internal/service"
+	"github.com/oxygenesis/signature/internal/storage"
 )
 
 // --- fakes/stubs used here ---

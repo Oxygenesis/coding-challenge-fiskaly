@@ -7,7 +7,7 @@ import (
 	"os"
 	"testing"
 
-	svc "example.com/fiskaly/signature/internal/service"
+	svc "github.com/oxygenesis/signature/internal/service"
 )
 
 // OK path: Start returns nil, main must not call osExit.
