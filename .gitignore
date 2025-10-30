@@ -1,0 +1,16 @@
+# Go coverage & profiles
+coverage.out
+cover.out
+coverage*.out
+*.cover
+*.coverprofile
+*.cov
+*.lcov
+profile.cov
+cov.out
+
+# Coverage reports / dirs
+coverage/
+coverage-html/
+htmlcov/
+.tmp-coverage/
