@@ -1,14 +1,66 @@
 # Signature Service Go
 
-This project follows a Clean Architecture structure inspired by Domain-Driven Design (DDD) principles - Production ready based on previous project.
+---
 
-The domain layer defines core entities (SignatureDevice) and interfaces (Signer, Repository) that capture the essential business rules.
-The application (service) layer orchestrates these domain operations as use cases.
-Infrastructure layers (http, storage, crypto) implement the interfaces, keeping external concerns decoupled from core logic.
+## Reviewer TL;DR
 
-This design enables easy extension (e.g., adding new signing algorithms or persistence backends) without changing the domain logic, while ensuring testability and clear separation of concerns.
+### How to run
+```bash
+# build & run
+make build          # optional & could be used for deployment / prod env
+make run            # listens on :8080
 
-It exposes REST endpoints to create **signature devices** and sign arbitrary data using **RSA** or **ECDSA**, with a strictly monotonically increasing, gap-free `signature_counter` and signature chaining.
+# or manual
+go run ./cmd/signature-service -mode=http -addr=:8080
+```
+
+### How to test
+```bash
+make test                      # unit tests with coverage
+make run-smoke-test            # in‑process HTTP smoke
+make smoke-curl                # curl flow with jq (pretty)
+make smoke-curl-nojq           # curl flow without jq
+go tool cover -func=coverage.out
+```
+
+### Design decisions & trade‑offs
+- **DDD-ish layering:** `domain` (entity/errors/ports) → `service` (use-case) → `transport` (`internal/app/http`). Keeps core logic independent of HTTP/storage. *Trade-off:* a few more files vs a single package.
+- **Atomic `Update(id, fn)` in repository:** ensures **strictly monotonic, gap-free** `signature_counter` under concurrency. *Trade-off:* requires a similar transactional pattern in any future DB repo (e.g., `SELECT … FOR UPDATE`).
+- **`domain.Signer` interface + factory:** RSA/ECDSA today; adding algorithms doesn’t touch service. *Trade-off:* tiny indirection for testability/extensibility.
+- **stdlib `net/http`:** minimal deps; easy to swap router later. *Trade-off:* fewer batteries than a full framework.
+- **In-memory storage now:** meets challenge, clean seam for RDBMS later. *Trade-off:* not persistent and guarantees are process-local (see limitations).
+
+### Assumptions
+- Single tenant (no authN/Z) as per prompt
+- Device ID is provided by client (could be a UUID), uniqueness enforced by repo
+- Base case for signing uses `base64(deviceID)` when `signature_counter == 0`
+- Only `RSA` (SHA-256/PKCS#1 v1.5) and `ECDSA` (SHA-256 ASN.1) are currently supported but opens to other logic in the future
+
+### Known limitations
+- **Process-local monotonicity:** with in-memory repo, guarantees hold within a single process. For multi-node, use a SQL repo with row locks/transactions
+- **No idempotency on `Sign`:** retried client requests may produce different signatures; add idempotency keys if needed
+- **Keys in memory:** use KMS/HSM in production; add rotation policy
+- **No pagination/filtering on list:** fine for the challenge; trivial to add
+
+### Approximate time spent
+- Design & scaffolding: ~2–3h  
+- Implementation (domain/service/http/storage/crypto): ~3–4h  
+- Tests, smoke, Make targets, README: ~2h  
+**Total:** ~7-9 hours
+
+
+## AI Tools Disclosure
+
+- **ChatGPT (GPT-5 Thinking)** was used to:
+  - discuss the draft handlers, service logic, and repo interface patterns,
+  - generate tests for 100% coverage (including concurrency-safe Update, panic recovery middleware, and main.go exit paths) with the request to use stub for simplicity,
+  - collaborate with this README and the cURL cookbook.
+
+- All code paths and concurrency guarantees were reasoned about and validated manually (especially monotonic counter, signature chaining, and RSA/ECDSA verification).
+
+Feedback:
+- Difficulty: Moderate
+- Reasons : The task require to implement the signing, rest API, fully tested, and concurrent use, therefore require a good design for scalability and interchangeable structure while allowing the apps running as expected.
 
 ---
 
@@ -352,15 +404,6 @@ Main wires:
 - `http.Start(ctx, addr, svc, test)`
 
 ---
-
-## AI Tools Disclosure
-
-- **ChatGPT (GPT-5 Thinking)** was used to:
-  - discuss the draft handlers, service logic, and repo interface patterns,
-  - generate tests for 100% coverage (including concurrency-safe Update, panic recovery middleware, and main.go exit paths),
-  - collaborate with this README and the cURL cookbook.
-
-- All code paths and concurrency guarantees were reasoned about and validated manually (especially monotonic counter, signature chaining, and RSA/ECDSA verification).
 
 ---
 
